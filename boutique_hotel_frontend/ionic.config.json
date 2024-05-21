@@ -1,0 +1,7 @@
+{
+  "name": "boutique_hotel",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
