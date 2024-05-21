@@ -16,7 +16,7 @@
           <h2>
             {{ room.title }}
             <span class="price">
-              <ion-note>\${{ room.price }}</ion-note>
+              <ion-note>${{ room.price }}</ion-note>
             </span>
           </h2>
           <h3>Beds: <ion-note>{{ room.beds }}</ion-note></h3>
