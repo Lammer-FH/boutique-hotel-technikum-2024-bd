@@ -1,8 +1,14 @@
 package at.fhtw.boutiquehoteltechnikum2024bd.dto;
 
 
-import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class RoomDTO {
     private Long id;
     private String title;
@@ -10,5 +16,5 @@ public class RoomDTO {
     private int bedcount;
     private float price;
     private String extras;
-    private List<String> images;
+    private String images;
 }
