@@ -11,7 +11,6 @@
 
     <ion-content :fullscreen="true" v-if="room">
       <ion-item>
-        <ion-icon aria-hidden="true" :icon="bedOutline" color="primary"></ion-icon>
         <ion-label class="ion-text-wrap">
           <h2>
             {{ room.title }}
@@ -19,7 +18,7 @@
               <ion-note>${{ room.price }}</ion-note>
             </span>
           </h2>
-          <h3>Beds: <ion-note>{{ room.beds }}</ion-note></h3>
+          <h3>Beds: <ion-note>{{ room.bedcount }}</ion-note></h3>
         </ion-label>
       </ion-item>
 
@@ -45,8 +44,6 @@ import {
   IonPage,
   IonToolbar,
 } from '@ionic/vue';
-import { personCircle } from 'ionicons/icons';
-import { getRoom } from '../data/rooms';
 
 const getBackButtonText = () => {
   const win = window as any;
@@ -55,7 +52,7 @@ const getBackButtonText = () => {
 };
 
 const route = useRoute();
-const room = getRoom(parseInt(route.params.id as string, 10));
+const room = {id:parseInt(route.params.id as string, 10), title: "roomTitle", price: "3$", bedcount:2, extra:"extra", description:"This s a room "};
 </script>
 
 <style scoped>
