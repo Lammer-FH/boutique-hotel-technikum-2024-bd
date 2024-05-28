@@ -32,6 +32,9 @@ public class Room {
     @Column
     private String extras;
 
+    @Column
+    private Boolean available;
+
     private List<String> images;
 
 
