@@ -34,5 +34,7 @@ public class Room {
 
     private String images;
 
+    @Column
+    private Boolean available;
 
 }

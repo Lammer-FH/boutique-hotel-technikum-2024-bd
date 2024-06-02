@@ -17,4 +17,5 @@ public class RoomDTO {
     private float price;
     private String extras;
     private String images;
+    private boolean available;
 }
