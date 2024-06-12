@@ -49,7 +49,6 @@ import axios from 'axios';
 
 const rooms = ref<Array<any> | null>(null);
 
-// Function to fetch data
 const fetchData = async () => {
   try {
     console.log("in fetch dta")
@@ -64,6 +63,7 @@ const fetchData = async () => {
 onMounted(() => {
   fetchData();
 });
+
 const refresh = (ev: CustomEvent) => {
   setTimeout(() => {
     ev.detail.complete();
