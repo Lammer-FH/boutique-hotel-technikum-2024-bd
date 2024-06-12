@@ -5,27 +5,27 @@
         <ion-buttons slot="start">
           <ion-back-button :text="getBackButtonText()" default-href="/"></ion-back-button>
         </ion-buttons>
-        <ion-title>{{ room.title }}</ion-title>
+        <ion-title>{{ singleRoom?.title }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content :fullscreen="true" v-if="room">
       <ion-item>
-        <ion-icon aria-hidden="true" :icon="bedOutline" color="primary"></ion-icon>
         <ion-label class="ion-text-wrap">
           <h2>
-            {{ room.title }}
+            {{ singleRoom?.title }}
             <span class="price">
-              <ion-note>${{ room.price }}</ion-note>
+              <ion-note>${{ singleRoom?.price }}</ion-note>
             </span>
           </h2>
-          <h3>Beds: <ion-note>{{ room.beds }}</ion-note></h3>
+          <img :src="singleRoom?.images" alt="Hotel Room Image" />
+          <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
         </ion-label>
       </ion-item>
 
       <div class="ion-padding">
-        <h3>{{ room.extra }}</h3>
-        <p>{{ room.description }}</p>
+        <h3>{{ singleRoom?.extras }}</h3>
+        <p>{{ singleRoom?.description }}</p>
       </div>
     </ion-content>
   </ion-page>
@@ -45,8 +45,8 @@ import {
   IonPage,
   IonToolbar,
 } from '@ionic/vue';
-import { personCircle } from 'ionicons/icons';
-import { getRoom } from '../data/rooms';
+import { onMounted, ref } from 'vue';
+import axios from 'axios';
 
 const getBackButtonText = () => {
   const win = window as any;
@@ -55,7 +55,25 @@ const getBackButtonText = () => {
 };
 
 const route = useRoute();
-const room = getRoom(parseInt(route.params.id as string, 10));
+const room = {id:parseInt(route.params.id as string, 10), title: "roomTitle", price: "3$", bedcount:2, extra:"extra", description:"This s a room "};
+const singleRoom = ref<any>(null);
+
+const fetchData = async () => {
+  try {
+    console.log("in fetch dta")
+    const response = await axios.get('http://localhost:8001/rooms/'+parseInt(route.params.id as string, 10));
+    singleRoom.value = response.data;
+    console.log(response.data)
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
+
+
 </script>
 
 <style scoped>
