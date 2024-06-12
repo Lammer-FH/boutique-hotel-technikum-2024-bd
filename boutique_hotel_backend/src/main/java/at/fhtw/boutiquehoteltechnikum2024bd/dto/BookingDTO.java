@@ -1,9 +1,11 @@
 package at.fhtw.boutiquehoteltechnikum2024bd.dto;
 
+import at.fhtw.boutiquehoteltechnikum2024bd.entity.Room;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -20,7 +22,9 @@ public class BookingDTO implements Serializable {
     String email;
     Boolean breakfast;
     @NotNull
-    Date checkIn;
+    Room room;
     @NotNull
-    Date checkOut;
+    LocalDate checkIn;
+    @NotNull
+    LocalDate checkOut;
 }
