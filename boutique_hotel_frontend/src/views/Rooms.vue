@@ -52,7 +52,7 @@ const rooms = ref<Array<any> | null>(null);
 const fetchData = async () => {
   try {
     console.log("in fetch dta")
-    const response = await axios.get('http://localhost:8001/rooms');
+    const response = await axios.get('http://localhost:8001/api/rooms');
     rooms.value = response.data;
     console.log(response.data)
   } catch (error) {
