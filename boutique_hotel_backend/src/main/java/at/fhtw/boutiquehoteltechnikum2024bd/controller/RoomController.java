@@ -24,14 +24,11 @@ public class RoomController {
     public ResponseEntity<List<RoomDTO>> getRooms(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false) Integer numberOfBeds,
-            @RequestParam(required = false) Double maxPrice) {
+          ) {
 
         RoomFilterDTO filter = new RoomFilterDTO();
         filter.setStartDate(startDate);
         filter.setEndDate(endDate);
-        filter.setNumberOfBeds(numberOfBeds);
-        filter.setMaxPrice(maxPrice);
 
         return ResponseEntity.ok(roomService.getRoomsWithFilters(filter));
     }
