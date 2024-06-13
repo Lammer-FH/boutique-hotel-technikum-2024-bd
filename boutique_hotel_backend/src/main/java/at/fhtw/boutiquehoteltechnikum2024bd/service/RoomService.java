@@ -6,6 +6,8 @@ import at.fhtw.boutiquehoteltechnikum2024bd.entity.Room;
 import at.fhtw.boutiquehoteltechnikum2024bd.mapper.RoomMapper;
 import at.fhtw.boutiquehoteltechnikum2024bd.repository.BookingRepository;
 import at.fhtw.boutiquehoteltechnikum2024bd.repository.RoomRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class RoomService {
 
 
+    private static final Logger log = LoggerFactory.getLogger(RoomService.class);
     private final RoomMapper roomMapper;
     private final RoomRepository roomRepository;
     private final BookingRepository bookingRepository;

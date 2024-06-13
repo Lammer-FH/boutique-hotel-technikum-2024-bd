@@ -1,6 +1,6 @@
 <template>
   <ion-item v-if="room" :routerLink="'/room/' + room.id" :detail="false" class="list-item">
-    <div slot="start" :class="!room.read ? 'dot dot-unread' : 'dot'"></div>
+    <div slot="start"></div>
     <ion-label class="ion-text-wrap">
       <h2>
         {{ room.title }}
@@ -9,7 +9,7 @@
           <ion-icon aria-hidden="true" :icon="chevronForward" size="small" v-if="isIos()"></ion-icon>
         </span>
       </h2>
-      <h3>Beds: {{ room.beds }}</h3>
+      <h3>Beds: {{ room.bedcount }}</h3>
       <p>{{ room.extra }}</p>
       <p>{{ room.description }}</p>
     </ion-label>
