@@ -12,15 +12,19 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/rooms")
+@CrossOrigin
+@RequestMapping("rooms")
 public class RoomController {
 
 
-    @Autowired
-    private RoomService roomService;
+    private final RoomService roomService;
+
+    public RoomController(RoomService roomService) {
+        this.roomService = roomService;
+    }
 
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<RoomDTO>> getRooms(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
