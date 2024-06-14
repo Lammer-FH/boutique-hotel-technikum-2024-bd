@@ -13,6 +13,8 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+#      - wird sichergestellt, dass das init.sql-Skript beim Erstellen des Containers ausgeführt wird
 
 volumes:
   db_data:
