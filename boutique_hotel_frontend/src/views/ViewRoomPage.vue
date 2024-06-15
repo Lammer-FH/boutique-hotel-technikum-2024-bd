@@ -29,7 +29,7 @@
         <h3>{{ singleRoom?.extras }}</h3>
         <p>{{ singleRoom?.description }}</p>
       </div>
-      <ion-button expand="block" @click="navigateToReservation">Reserve Room</ion-button>
+      <ion-button class="check-availability-button" expand="block" @click="navigateToReservation">Reserve Room</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -138,6 +138,13 @@ h1 {
   margin: 0;
   font-weight: bold;
   font-size: 1.4rem;
+}
+
+.check-availability-button{
+  width: 100%;
+  max-width: 500px;
+  margin: 10px auto;
+
 }
 
 p {

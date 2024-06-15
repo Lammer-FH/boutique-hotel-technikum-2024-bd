@@ -36,15 +36,14 @@
           <ion-checkbox v-model="breakfast"></ion-checkbox>
         </ion-item>
 
+        <div class="date-picker">
         <ion-item>
-          <ion-label position="floating">Check In</ion-label>
-          <ion-datetime v-model="checkIn"></ion-datetime>
+          <ion-datetime  v-model="checkIn" presentation="date" :min=minDate><span slot="title"> Check In</span> </ion-datetime>
         </ion-item>
-
         <ion-item>
-          <ion-label position="floating">Check Out</ion-label>
-          <ion-datetime v-model="checkOut"></ion-datetime>
+          <ion-datetime presentation="date" :min=checkIn v-model="checkOut"><span slot="title"> Check Out</span> </ion-datetime>
         </ion-item>
+        </div>
 
         <ion-button expand="block" type="submit">Preview Reservation</ion-button>
       </form>
@@ -82,8 +81,9 @@ const lastName = ref('');
 const email = ref('');
 const confirmEmail = ref('');
 const breakfast = ref(false);
-const checkIn = ref('');
-const checkOut = ref('');
+const checkIn = ref(new Date().toISOString());
+const checkOut = ref(new Date().toISOString());
+const minDate = new Date().toISOString();
 
 const fetchRoomData = async () => {
   try {
@@ -124,5 +124,13 @@ onMounted(() => {
 <style scoped>
 ion-item {
   margin-bottom: 16px;
+}
+
+.date-picker {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 20px auto;
 }
 </style>
