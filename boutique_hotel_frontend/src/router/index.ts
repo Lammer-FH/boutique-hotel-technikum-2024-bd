@@ -19,7 +19,18 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/room/:id',
+    name: 'ViewRoom',
     component: () => import('../views/ViewRoomPage.vue')
+  },
+  {
+    path: '/reservation/:id',
+    name: 'Reservation',
+    component: () => import('../views/ReservationPage.vue')
+  },
+  {
+    path: '/preview-reservation',
+    name: 'PreviewReservation',
+    component: () => import('../views/PreviewReservationPage.vue')
   }
 ]
 
