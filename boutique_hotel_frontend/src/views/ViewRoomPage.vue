@@ -18,8 +18,10 @@
               <ion-note>${{ singleRoom?.price }}</ion-note>
             </span>
           </h2>
-          <div v-for="(image, index) in singleRoom?.images" :key="index">
-            <img :src="image" alt="Hotel Room Image" />
+          <div class="image-wrapper">
+            <ion-icon @click="prevImage" :class="currentImageIndex === 0 && 'disabled-icon'"  :icon="chevronBackOutline"></ion-icon>
+            <img :src="currentImage" alt="Hotel Room Image" class="room-images" />
+              <ion-icon  @click="nextImage" :icon="chevronForwardOutline" :class="singleRoom.images.length-1 === currentImageIndex && 'disabled-icon'"></ion-icon>
           </div>
           <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
         </ion-label>
@@ -48,7 +50,9 @@ import {
   IonPage,
   IonToolbar,
 } from '@ionic/vue';
-import { onMounted, ref } from 'vue';
+import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
+import { computed, onMounted, ref } from 'vue';
+
 import axios from 'axios';
 
 const getBackButtonText = () => {
@@ -59,8 +63,9 @@ const getBackButtonText = () => {
 
 import router from "@/router";
 const route = useRoute();
-// const room = {id:parseInt(route.params.id as string, 10), title: "roomTitle", price: "3$", bedcount:2, extra:"extra", description:"This s a room "};
 const singleRoom = ref<any>(null);
+const currentImageIndex = ref(0);
+
 const navigateToReservation = () => {
   if (singleRoom.value && singleRoom.value.id) {
     console.log('Navigating to reservation page for room:', singleRoom.value.id);
@@ -72,22 +77,35 @@ const navigateToReservation = () => {
 
 const fetchData = async () => {
   try {
-    console.log("in fetch dta")
-    console.log("Fetching data for room:", route.params.id);
     const response = await axios.get(`http://localhost:8001/rooms/${route.params.id}`);
     const roomData = response.data;
     roomData.images = JSON.parse(roomData.images); // Konvertiere JSON-String in Array image geht noch nicht
     singleRoom.value = roomData;
-    console.log('Fetched room data:', singleRoom.value);
-    console.log(response.data)
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 };
 
+
 onMounted(() => {
   fetchData();
 });
+const currentImage = computed(() => {
+  return singleRoom.value.images?.[currentImageIndex.value];
+});
+
+const nextImage = () => {
+  if (currentImageIndex.value < singleRoom.value.images.length - 1) {
+    currentImageIndex.value++;
+  }
+};
+
+const prevImage = () => {
+  if (currentImageIndex.value > 0) {
+    currentImageIndex.value--;
+  }
+};
+
 
 
 </script>
@@ -105,14 +123,7 @@ ion-label {
 
 ion-item h2 {
   font-weight: 600;
-  
-  /**
-   * With larger font scales
-   * the date/time should wrap to the next
-   * line. However, there should be
-   * space between the name and the date/time
-   * if they can appear on the same line.
-   */
+
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -143,4 +154,25 @@ h1 {
 p {
   line-height: 1.4;
 }
+
+.image-wrapper{
+  display: flex;
+  align-items: center;
+justify-content:center;
+}
+
+.room-images{
+  width: 500px;
+  height: 300px;
+}
+
+
+.icons{
+  position: absolute;
+  z-index: 1000;
+
+}
+
+.disabled-icon{
+opacity: 0.5;}
 </style>
