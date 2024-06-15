@@ -9,7 +9,7 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content :fullscreen="true" v-if="room">
+    <ion-content :fullscreen="true" v-if="singleRoom">
       <ion-item>
         <ion-label class="ion-text-wrap">
           <h2>
@@ -18,7 +18,9 @@
               <ion-note>${{ singleRoom?.price }}</ion-note>
             </span>
           </h2>
-          <img :src="singleRoom?.images" alt="Hotel Room Image" />
+          <div v-for="(image, index) in singleRoom?.images" :key="index">
+            <img :src="image" alt="Hotel Room Image" />
+          </div>
           <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
         </ion-label>
       </ion-item>
@@ -27,6 +29,7 @@
         <h3>{{ singleRoom?.extras }}</h3>
         <p>{{ singleRoom?.description }}</p>
       </div>
+      <ion-button expand="block" @click="navigateToReservation">Reserve Room</ion-button>
     </ion-content>
   </ion-page>
 </template>
@@ -54,15 +57,28 @@ const getBackButtonText = () => {
   return mode === 'ios' ? 'Inbox' : '';
 };
 
+import router from "@/router";
 const route = useRoute();
-const room = {id:parseInt(route.params.id as string, 10), title: "roomTitle", price: "3$", bedcount:2, extra:"extra", description:"This s a room "};
+// const room = {id:parseInt(route.params.id as string, 10), title: "roomTitle", price: "3$", bedcount:2, extra:"extra", description:"This s a room "};
 const singleRoom = ref<any>(null);
+const navigateToReservation = () => {
+  if (singleRoom.value && singleRoom.value.id) {
+    console.log('Navigating to reservation page for room:', singleRoom.value.id);
+    router.push(`/reservation/${singleRoom.value.id}`);
+  } else {
+    console.error('Room ID is not available');
+  }
+};
 
 const fetchData = async () => {
   try {
     console.log("in fetch dta")
-    const response = await axios.get('http://localhost:8001/rooms/'+parseInt(route.params.id as string, 10));
-    singleRoom.value = response.data;
+    console.log("Fetching data for room:", route.params.id);
+    const response = await axios.get(`http://localhost:8001/rooms/${route.params.id}`);
+    const roomData = response.data;
+    roomData.images = JSON.parse(roomData.images); // Konvertiere JSON-String in Array image geht noch nicht
+    singleRoom.value = roomData;
+    console.log('Fetched room data:', singleRoom.value);
     console.log(response.data)
   } catch (error) {
     console.error('Error fetching data:', error);

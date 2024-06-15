@@ -10,8 +10,14 @@
       </ion-toolbar>
       </ion-toolbar>
     </ion-header>
-
     <ion-content :fullscreen="true">
+      <div class="date-picker-container">
+        <VueDatePicker
+            v-model="date"
+            range
+        />
+        <ion-button expand="block" class="check-availability-button" @click="checkAvailability">Check Availability</ion-button>
+      </div>
       <ion-refresher slot="fixed" @ionRefresh="refresh($event)">
         <ion-refresher-content></ion-refresher-content>
       </ion-refresher>
@@ -40,14 +46,18 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton
+  IonBackButton, IonButton
 } from '@ionic/vue';
 import MessageListItem from '@/components/RoomListItem.vue';
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
+import VueDatePicker from "@vuepic/vue-datepicker";
+import '@vuepic/vue-datepicker/dist/main.css'
 
 
 const rooms = ref<Array<any> | null>(null);
+
+const date = ref();
 
 const fetchData = async () => {
   try {
@@ -59,9 +69,19 @@ const fetchData = async () => {
     console.error('Error fetching data:', error);
   }
 };
-
+const checkAvailability = async () => {
+  if (date.value[0] && date.value[1]) {
+    const response = await axios.get('http://localhost:8001/rooms?startDate=' + date.value[0].toISOString().split('T')[0] + '&endDate=' + date.value[1].toISOString().split('T')[0]);
+    rooms.value = response.data;
+  } else {
+    console.log('Please select a date range.');
+  }
+};
 onMounted(() => {
   fetchData();
+  const startDate = new Date();
+  const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
+  date.value = [startDate, endDate];
 });
 
 const refresh = (ev: CustomEvent) => {
@@ -70,3 +90,17 @@ const refresh = (ev: CustomEvent) => {
   }, 3000);
 };
 </script>
+
+<style scoped>
+.date-picker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px auto;
+  max-width: 500px;
+  width: 100%;
+}
+.check-availability-button {
+  margin-top: 10px;
+}
+</style>
