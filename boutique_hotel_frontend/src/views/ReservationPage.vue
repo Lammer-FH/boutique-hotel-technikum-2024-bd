@@ -5,7 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button default-href="/"></ion-back-button>
         </ion-buttons>
-        <ion-title>Reserve {{ room?.title }}</ion-title>
+        <ion-title>Reserve {{ singleRoom?.title }}</ion-title>
       </ion-toolbar>
     </ion-header>
 
@@ -67,13 +67,14 @@ import {
   IonToolbar,
   IonButton
 } from '@ionic/vue';
-import { ref, onMounted } from 'vue';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import axios from 'axios';
+import { useRoomStore } from '@/roomStore';
 
 const route = useRoute();
 const router = useRouter();
 const roomId = route.params.id;
+const roomStore= useRoomStore()
 
 const room = ref<any>(null);
 const firstName = ref('');
@@ -84,15 +85,8 @@ const breakfast = ref(false);
 const checkIn = ref(new Date().toISOString());
 const checkOut = ref(new Date().toISOString());
 const minDate = new Date().toISOString();
+const singleRoom = computed(() => roomStore.singleRoom);
 
-const fetchRoomData = async () => {
-  try {
-    const response = await axios.get(`http://localhost:8001/rooms/${roomId}`);
-    room.value = response.data;
-  } catch (error) {
-    console.error('Error fetching room data:', error);
-  }
-};
 
 const goToPreview = () => {
   if (email.value !== confirmEmail.value) {
@@ -110,15 +104,19 @@ const goToPreview = () => {
       breakfast: breakfast.value ? 'true' : 'false',
       checkIn: checkIn.value,
       checkOut: checkOut.value,
-      roomTitle: room.value.title,
-      roomPrice: room.value.price.toString()
+      roomTitle: singleRoom.value?.title,
+      roomPrice: singleRoom.value?.price.toString()
     }
   });
 };
+const fetchRoomData = async () => {
+  await roomStore.fetchRoomData(roomId as string);
+};
 
-onMounted(() => {
-  fetchRoomData();
+onBeforeMount(async () => {
+  fetchRoomData()
 });
+
 </script>
 
 <style scoped>
