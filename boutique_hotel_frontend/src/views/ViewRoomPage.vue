@@ -51,9 +51,8 @@ import {
   IonToolbar,
 } from '@ionic/vue';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
-import { computed, onMounted, ref } from 'vue';
-
-import axios from 'axios';
+import { computed,ref, onBeforeMount } from 'vue';
+import { useRoomStore } from '@/roomStore';
 
 const getBackButtonText = () => {
   const win = window as any;
@@ -63,8 +62,8 @@ const getBackButtonText = () => {
 
 import router from "@/router";
 const route = useRoute();
-const singleRoom = ref<any>(null);
 const currentImageIndex = ref(0);
+const roomStore= useRoomStore();
 
 const navigateToReservation = () => {
   if (singleRoom.value && singleRoom.value.id) {
@@ -75,27 +74,21 @@ const navigateToReservation = () => {
   }
 };
 
-const fetchData = async () => {
-  try {
-    const response = await axios.get(`http://localhost:8001/rooms/${route.params.id}`);
-    const roomData = response.data;
-    roomData.images = JSON.parse(roomData.images); // Konvertiere JSON-String in Array image geht noch nicht
-    singleRoom.value = roomData;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+
+const fetchRoomData = async () => {
+  const roomId = route.params.id as string;
+  await roomStore.fetchRoomData(roomId);
 };
 
-
-onMounted(() => {
-  fetchData();
+onBeforeMount(async () => {
+  await fetchRoomData(); 
 });
 const currentImage = computed(() => {
-  return singleRoom.value.images?.[currentImageIndex.value];
+  return singleRoom.value?.images?.[currentImageIndex.value];
 });
 
 const nextImage = () => {
-  if (currentImageIndex.value < singleRoom.value.images.length - 1) {
+  if (currentImageIndex.value < singleRoom.value?.images?.length! - 1) {
     currentImageIndex.value++;
   }
 };
@@ -106,6 +99,8 @@ const prevImage = () => {
   }
 };
 
+
+const singleRoom = computed(() => roomStore.singleRoom);
 
 
 </script>
