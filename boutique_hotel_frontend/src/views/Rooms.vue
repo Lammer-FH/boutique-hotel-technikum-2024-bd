@@ -29,7 +29,7 @@
       </ion-header>
 
       <ion-list>
-        <MessageListItem v-for="room in rooms" :key="room.id" :room="room" />
+        <MessageListItem v-for="room in roomStore.allRooms" :key="room.id" :room="room" />
       </ion-list>
     </ion-content>
   </ion-page>
@@ -50,35 +50,33 @@ import {
 } from '@ionic/vue';
 import MessageListItem from '@/components/RoomListItem.vue';
 import { onMounted, ref } from 'vue';
-import axios from 'axios';
 import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css'
+import { useRoomStore } from '@/roomStore';
 
 
 const rooms = ref<Array<any> | null>(null);
+  const roomStore=useRoomStore()
 
 const date = ref();
 
 const fetchData = async () => {
-  try {
-    console.log("in fetch dta")
-    const response = await axios.get('http://localhost:8001/rooms');
-    rooms.value = response.data;
-    console.log(response.data)
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
+  await roomStore.fetchAllRooms();
 };
+
 const checkAvailability = async () => {
   if (date.value[0] && date.value[1]) {
-    const response = await axios.get('http://localhost:8001/rooms?startDate=' + date.value[0].toISOString().split('T')[0] + '&endDate=' + date.value[1].toISOString().split('T')[0]);
-    rooms.value = response.data;
+    await roomStore.checkAvailability(
+      date.value[0].toISOString().split('T')[0],
+      date.value[1].toISOString().split('T')[0]
+    );
   } else {
     console.log('Please select a date range.');
   }
-};
+}
+
 onMounted(() => {
-  fetchData();
+  fetchData()
   const startDate = new Date();
   const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
   date.value = [startDate, endDate];
