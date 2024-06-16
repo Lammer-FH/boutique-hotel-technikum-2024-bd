@@ -14,6 +14,8 @@
       <div class="date-picker-container">
         <VueDatePicker
             v-model="date"
+            min-date="new Date()"
+            :enable-time-picker="false"
             range
         />
         <ion-button expand="block" class="check-availability-button" @click="checkAvailability">Check Availability</ion-button>
@@ -103,4 +105,5 @@ const refresh = (ev: CustomEvent) => {
 .check-availability-button {
   margin-top: 10px;
 }
+
 </style>
