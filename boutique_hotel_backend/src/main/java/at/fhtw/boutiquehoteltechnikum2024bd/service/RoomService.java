@@ -8,9 +8,13 @@ import at.fhtw.boutiquehoteltechnikum2024bd.repository.BookingRepository;
 import at.fhtw.boutiquehoteltechnikum2024bd.repository.RoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,26 +33,23 @@ public class RoomService {
         this.bookingRepository = bookingRepository;
     }
 
-    public List<RoomDTO> getRooms() {
-        return roomRepository.findAll()
-                .stream()
-                .map(roomMapper::roomToRoomDTO)
-                .toList();
-    }
-
     public RoomDTO getRoomById(Long id) {
         return roomRepository.findById(id)
                 .map(roomMapper::roomToRoomDTO)
                 .orElse(null);
     }
 
-    public List<RoomDTO> getRoomsWithFilters(RoomFilterDTO filter) {
+    public List<RoomDTO> getRoomsWithFilters(RoomFilterDTO filter, int pageNumber, int pageSize) {
         LocalDate startDate = filter.getStartDate();
         LocalDate endDate = filter.getEndDate();
         Integer numberOfBeds = filter.getNumberOfBeds();
         Double maxPrice = filter.getMaxPrice();
+        Pageable pageable= PageRequest.of(pageNumber, pageSize);
+        Page<Room> roomsPage= roomRepository.findAll(pageable);
+        Collection<Room>roomsList= roomsPage.getContent();
 
-        return roomRepository.findAll()
+
+        return roomsList
                 .stream()
                 .filter(room -> (numberOfBeds == null || room.getBedcount() == numberOfBeds) &&
                         (maxPrice == null || room.getPrice() <= maxPrice) &&
