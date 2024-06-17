@@ -1,5 +1,5 @@
 <template>
-  <ion-item v-if="room" :routerLink="'/room/' + room.id" :detail="false" class="list-item">
+  <ion-item :routerLink="`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}`" :detail="false" class="list-item">
     <div slot="start"></div>
     <ion-label class="ion-text-wrap">
       <h2>
@@ -23,6 +23,8 @@ import { chevronForward } from 'ionicons/icons';
 
 defineProps({
   room: Object,
+  checkIn: String,
+  checkOut: String,
 });
 
 const isIos = () => {
