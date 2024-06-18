@@ -1,5 +1,6 @@
 package at.fhtw.boutiquehoteltechnikum2024bd.service;
 
+import at.fhtw.boutiquehoteltechnikum2024bd.dto.ResponseDTO;
 import at.fhtw.boutiquehoteltechnikum2024bd.dto.RoomDTO;
 import at.fhtw.boutiquehoteltechnikum2024bd.dto.RoomFilterDTO;
 import at.fhtw.boutiquehoteltechnikum2024bd.entity.Room;
@@ -8,9 +9,13 @@ import at.fhtw.boutiquehoteltechnikum2024bd.repository.BookingRepository;
 import at.fhtw.boutiquehoteltechnikum2024bd.repository.RoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,32 +34,42 @@ public class RoomService {
         this.bookingRepository = bookingRepository;
     }
 
-    public List<RoomDTO> getRooms() {
-        return roomRepository.findAll()
-                .stream()
-                .map(roomMapper::roomToRoomDTO)
-                .toList();
-    }
-
     public RoomDTO getRoomById(Long id) {
         return roomRepository.findById(id)
                 .map(roomMapper::roomToRoomDTO)
                 .orElse(null);
     }
 
-    public List<RoomDTO> getRoomsWithFilters(RoomFilterDTO filter) {
+    public ResponseDTO getRoomsWithFilters(RoomFilterDTO filter, int pageNumber, int pageSize) {
         LocalDate startDate = filter.getStartDate();
         LocalDate endDate = filter.getEndDate();
         Integer numberOfBeds = filter.getNumberOfBeds();
         Double maxPrice = filter.getMaxPrice();
+        Pageable pageable= PageRequest.of(pageSize, pageNumber);
+        Page<Room> roomsPage= roomRepository.findAll(pageable);
+        Collection<Room>roomsList= roomsPage.getContent();
 
-        return roomRepository.findAll()
+        List<RoomDTO> content=roomsList
                 .stream()
                 .filter(room -> (numberOfBeds == null || room.getBedcount() == numberOfBeds) &&
                         (maxPrice == null || room.getPrice() <= maxPrice) &&
                         isRoomAvailable(room, startDate, endDate))
                 .map(roomMapper::roomToRoomDTO)
                 .collect(Collectors.toList());
+
+
+        ResponseDTO responseDTO= new ResponseDTO();
+
+        responseDTO.setContent(content);
+        responseDTO.setPageNumber(roomsPage.getNumber());
+        responseDTO.setPageSize(roomsPage.getSize());
+        responseDTO.setTotalElementsCount(roomsPage.getTotalElements());
+        responseDTO.setTotalPages(roomsPage.getTotalPages());
+
+        responseDTO.setLast(roomsPage.isLast());
+
+
+        return responseDTO;
     }
 
     private boolean isRoomAvailable(Room room, LocalDate startDate, LocalDate endDate) {
