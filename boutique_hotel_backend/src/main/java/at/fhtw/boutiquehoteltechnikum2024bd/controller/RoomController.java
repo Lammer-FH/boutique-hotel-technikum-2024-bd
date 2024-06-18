@@ -1,14 +1,15 @@
 package at.fhtw.boutiquehoteltechnikum2024bd.controller;
 
+import at.fhtw.boutiquehoteltechnikum2024bd.dto.ResponseDTO;
 import at.fhtw.boutiquehoteltechnikum2024bd.dto.RoomDTO;
 import at.fhtw.boutiquehoteltechnikum2024bd.dto.RoomFilterDTO;
 import at.fhtw.boutiquehoteltechnikum2024bd.service.RoomService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -24,7 +25,7 @@ public class RoomController {
 
 
     @GetMapping()
-    public ResponseEntity<List<RoomDTO>> getRooms(
+    public ResponseEntity<ResponseDTO> getRooms(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(value = "pageSize", defaultValue = "5", required = false)  int pageSize,
@@ -35,7 +36,8 @@ public class RoomController {
         filter.setStartDate(startDate);
         filter.setEndDate(endDate);
 
-        return ResponseEntity.ok(roomService.getRoomsWithFilters(filter, pageNumber, pageSize));
+
+        return new ResponseEntity<>( roomService.getRoomsWithFilters(filter, pageSize, pageNumber), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
