@@ -3,7 +3,10 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button :text="getBackButtonText()" default-href="/"></ion-back-button>
+          <ion-back-button
+            :text="getBackButtonText()"
+            default-href="/"
+          ></ion-back-button>
         </ion-buttons>
         <ion-title>{{ singleRoom?.title }}</ion-title>
       </ion-toolbar>
@@ -19,9 +22,24 @@
             </span>
           </h2>
           <div class="image-wrapper">
-            <ion-icon @click="prevImage" :class="currentImageIndex === 0 && 'disabled-icon'"  :icon="chevronBackOutline"></ion-icon>
-            <img :src="currentImage" alt="Hotel Room Image" class="room-images" />
-              <ion-icon  @click="nextImage" :icon="chevronForwardOutline" :class="singleRoom.images.length-1 === currentImageIndex && 'disabled-icon'"></ion-icon>
+            <ion-icon
+              @click="prevImage"
+              :class="currentImageIndex === 0 && 'disabled-icon'"
+              :icon="chevronBackOutline"
+            ></ion-icon>
+            <img
+              :src="currentImage"
+              alt="Hotel Room Image"
+              class="room-images"
+            />
+            <ion-icon
+              @click="nextImage"
+              :icon="chevronForwardOutline"
+              :class="
+                singleRoom.images.length - 1 === currentImageIndex &&
+                'disabled-icon'
+              "
+            ></ion-icon>
           </div>
           <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
         </ion-label>
@@ -31,7 +49,12 @@
         <h3>{{ singleRoom?.extras }}</h3>
         <p>{{ singleRoom?.description }}</p>
       </div>
-      <ion-button class="check-availability-button" expand="block" @click="navigateToReservation">Reserve Room</ion-button>
+      <ion-button
+        class="check-availability-button"
+        expand="block"
+        @click="navigateToReservation"
+        >Reserve Room</ion-button
+      >
     </ion-content>
   </ion-page>
 </template>
@@ -53,6 +76,8 @@ import {
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
 import { computed,ref, onBeforeMount } from 'vue';
 import { useRoomStore } from '@/roomStore';
+
+
 import router from "@/router";
 
 const route = useRoute();
@@ -152,7 +177,7 @@ h1 {
   font-size: 1.4rem;
 }
 
-.check-availability-button{
+.check-availability-button {
   width: 100%;
   max-width: 500px;
   margin: 10px auto;
@@ -163,24 +188,32 @@ p {
   line-height: 1.4;
 }
 
-.image-wrapper{
+.image-wrapper {
   display: flex;
   align-items: center;
-justify-content:center;
+  justify-content: center;
 }
 
-.room-images{
+.room-images {
+  margin-top: 5px;
   width: 500px;
   height: 300px;
 }
 
-
-.icons{
+@media (max-width: 768px) {
+  .room-images {
+    margin-top: 25px;
+    width: 250px;
+    height: 150px;
+  }
+}
+.icons {
   position: absolute;
   z-index: 1000;
 
 }
 
-.disabled-icon{
-opacity: 0.5;}
+.disabled-icon {
+  opacity: 0.5;
+}
 </style>
