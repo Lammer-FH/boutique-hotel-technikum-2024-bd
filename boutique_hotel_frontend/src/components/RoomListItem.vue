@@ -10,13 +10,15 @@
         </span>
       </h2>
       <img
-              :src="parsedImage"
+             :src="parsedImage"
               alt="Hotel Room Image"
               class="thumbnail"
             /> 
       <div class="text">
       <p>Beds: {{ room.bedcount }}</p>
-      <p>{{ room.extras }}</p>
+      <div class="extras" >
+          <IonIcon :icon="iconMapper[extra]" v-for="extra in parsedExtras" class="extra-icon" />
+      </div>
       <p>{{ room.description }}</p>
     </div>
    
@@ -28,11 +30,26 @@
 <script setup lang="ts">
 import { IonIcon, IonItem, IonLabel, IonNote } from '@ionic/vue';
 import { chevronForward } from 'ionicons/icons';
+import {barbell, restaurant, wifi, wine, boat, gameController, bus, airplane} from "ionicons/icons";
+
+ const iconMapper :any= {
+  "free Wifi": wifi,
+  "breakfast Included": restaurant,
+  "free Gym": barbell,
+  "free drinks":wine,
+  "free Boat Trips": boat,
+  "Gaming Room": gameController,
+  "Airport pickup ": airplane,
+  "free Shuttle Service": bus
+};
 
 
 const props=defineProps({
   room: Object,
 });
+
+const parsedExtras = props.room?.extras.split(',').map(extra => extra.trim());
+console.log(props.room?.extras,parsedExtras)
 
 const {images} = props!.room!;
 const parsedImage= JSON.parse(images)[0];
@@ -58,14 +75,6 @@ const isIos = () => {
 .list-item h2 {
   font-weight: 600;
   margin: 0;
-  
-  /**
-   * With larger font scales
-   * the date/time should wrap to the next
-   * line. However, there should be
-   * space between the name and the date/time
-   * if they can appear on the same line.
-   */
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -118,8 +127,20 @@ float: left;
 }
 .text{
   margin-top: 4px;
-  padding-left: 150px;
-
-  
+  padding-left: 150px; 
 }
+.extras {
+  display: flex!important;
+  flex-direction: row;
+}
+.extra-icon{
+margin-right: 5px!important;
+margin-top: 4px;
+margin-bottom: 4px;
+
+  color: black!important;
+
+
+}
+
 </style>
