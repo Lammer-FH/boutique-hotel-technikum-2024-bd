@@ -2,16 +2,24 @@
   <ion-item v-if="room" :routerLink="'/room/' + room.id" :detail="false" class="list-item">
     <div slot="start"></div>
     <ion-label class="ion-text-wrap">
-      <h2>
+      <h2 class="room-title">
         {{ room.title }}
         <span class="price">
           <ion-note>${{ room.price }}</ion-note>
           <ion-icon aria-hidden="true" :icon="chevronForward" size="small" v-if="isIos()"></ion-icon>
         </span>
       </h2>
-      <h3>Beds: {{ room.bedcount }}</h3>
-      <p>{{ room.extra }}</p>
+      <img
+              :src="parsedImage"
+              alt="Hotel Room Image"
+              class="thumbnail"
+            /> 
+      <div class="text">
+      <p>Beds: {{ room.bedcount }}</p>
+      <p>{{ room.extras }}</p>
       <p>{{ room.description }}</p>
+    </div>
+   
     </ion-label>
   </ion-item>
 </template>
@@ -21,9 +29,14 @@
 import { IonIcon, IonItem, IonLabel, IonNote } from '@ionic/vue';
 import { chevronForward } from 'ionicons/icons';
 
-defineProps({
+
+const props=defineProps({
   room: Object,
 });
+
+const {images} = props!.room!;
+const parsedImage= JSON.parse(images)[0];
+
 
 const isIos = () => {
   const win = window as any;
@@ -95,5 +108,18 @@ const isIos = () => {
 
 .list-item .dot-unread {
   background: var(--ion-color-primary);
+}
+
+.thumbnail{
+margin-top:5px;
+width: 140px;
+height: 70px;
+float: left;
+}
+.text{
+  margin-top: 4px;
+  padding-left: 150px;
+
+  
 }
 </style>

@@ -86,8 +86,6 @@ import {
   IonCard,
   IonCardContent,
   IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
 } from "@ionic/vue";
 import MessageListItem from "@/components/RoomListItem.vue";
 import { onMounted, ref, watch } from "vue";
