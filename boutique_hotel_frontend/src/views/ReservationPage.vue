@@ -10,42 +10,29 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <form @submit.prevent="goToPreview">
-        <ion-item>
+      <form @submit.prevent="goToPreview" class="reservation-form">
+        <ion-item class="input-item">
           <ion-label position="floating">First Name</ion-label>
           <ion-input v-model="firstName" required></ion-input>
         </ion-item>
 
-        <ion-item>
+        <ion-item class="input-item">
           <ion-label position="floating">Last Name</ion-label>
           <ion-input v-model="lastName" required></ion-input>
         </ion-item>
 
-        <ion-item>
+        <ion-item class="input-item">
           <ion-label position="floating">Email</ion-label>
           <ion-input v-model="email" type="email" required></ion-input>
         </ion-item>
 
-        <ion-item>
-          <ion-label position="floating">Confirm Email</ion-label>
-          <ion-input v-model="confirmEmail" type="email" required></ion-input>
-        </ion-item>
-
-        <ion-item>
+        <ion-item class="input-item">
           <ion-label>Breakfast</ion-label>
           <ion-checkbox v-model="breakfast"></ion-checkbox>
         </ion-item>
 
-        <div class="date-picker">
-        <ion-item>
-          <ion-datetime  v-model="checkIn" presentation="date" :min=minDate><span slot="title"> Check In</span> </ion-datetime>
-        </ion-item>
-        <ion-item>
-          <ion-datetime presentation="date" :min=checkIn v-model="checkOut"><span slot="title"> Check Out</span> </ion-datetime>
-        </ion-item>
-        </div>
 
-        <ion-button expand="block" type="submit">Preview Reservation</ion-button>
+        <ion-button expand="block" type="submit" class="submit-button">Preview Reservation</ion-button>
       </form>
     </ion-content>
   </ion-page>
@@ -57,7 +44,6 @@ import {
   IonButtons,
   IonCheckbox,
   IonContent,
-  IonDatetime,
   IonHeader,
   IonInput,
   IonItem,
@@ -67,33 +53,24 @@ import {
   IonToolbar,
   IonButton
 } from '@ionic/vue';
-import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useRoomStore } from '@/roomStore';
 
 const route = useRoute();
 const router = useRouter();
 const roomId = route.params.id;
-const roomStore= useRoomStore()
+const roomStore = useRoomStore();
 
-const room = ref<any>(null);
 const firstName = ref('');
 const lastName = ref('');
 const email = ref('');
-const confirmEmail = ref('');
 const breakfast = ref(false);
-const checkIn = ref(new Date().toISOString());
-const checkOut = ref(new Date().toISOString());
-const minDate = new Date().toISOString();
+const checkIn = ref(route.query.checkIn);
+const checkOut = ref(route.query.checkOut);
 const singleRoom = computed(() => roomStore.singleRoom);
 
-
 const goToPreview = () => {
-  if (email.value !== confirmEmail.value) {
-    alert('Emails do not match');
-    return;
-  }
-
   router.push({
     name: 'PreviewReservation',
     query: {
@@ -114,9 +91,8 @@ const fetchRoomData = async () => {
 };
 
 onBeforeMount(async () => {
-  fetchRoomData()
+  fetchRoomData();
 });
-
 </script>
 
 <style scoped>
@@ -124,11 +100,21 @@ ion-item {
   margin-bottom: 16px;
 }
 
-.date-picker {
+.reservation-form {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  margin: 20px auto;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.input-item {
+  --highlight-color-focused: #3880ff;
+  --highlight-color: #ccc;
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button {
+  margin-top: 20px;
 }
 </style>

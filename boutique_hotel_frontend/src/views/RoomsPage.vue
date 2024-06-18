@@ -31,7 +31,7 @@
       </ion-header>
 
       <ion-list>
-        <MessageListItem v-for="room in roomStore.allRooms" :key="room.id" :room="room" />
+        <MessageListItem v-for="room in roomStore.allRooms" :key="room.id" :room="room" :check-in="formattedDate(date[0])" :check-out="formattedDate(date[1], true)" />
       </ion-list>
     </ion-content>
   </ion-page>
@@ -56,14 +56,22 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import '@vuepic/vue-datepicker/dist/main.css'
 import { useRoomStore } from '@/roomStore';
 
-
-const rooms = ref<Array<any> | null>(null);
-  const roomStore=useRoomStore()
-
+const roomStore = useRoomStore();
 const date = ref();
 
 const fetchData = async () => {
   await roomStore.fetchAllRooms();
+};
+
+const formattedDate = (date, isCheckout = false) => {
+  if (!date) return '';
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  const hour = isCheckout ? '23' : '00';
+  const minute = isCheckout ? '59' : '00';
+  return `${day}.${month}.${year} ${hour}:${minute}`;
 };
 
 const checkAvailability = async () => {
@@ -78,7 +86,7 @@ const checkAvailability = async () => {
 }
 
 onMounted(() => {
-  fetchData()
+  fetchData();
   const startDate = new Date();
   const endDate = new Date(new Date().setDate(startDate.getDate() + 7));
   date.value = [startDate, endDate];
@@ -103,5 +111,4 @@ const refresh = (ev: CustomEvent) => {
 .check-availability-button {
   margin-top: 10px;
 }
-
 </style>
