@@ -31,9 +31,7 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-list>
-        <MessageListItem v-for="room in roomStore.allRooms" :key="room.id" :room="room" :check-in="formattedDate(date[0])" :check-out="formattedDate(date[1], true)" />
-      </ion-list>
+    
       <div v-if="!roomStore.allRooms.length" class="error-card-container">
         <ion-card class="error-card">
           <ion-card-header>
