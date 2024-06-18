@@ -42,7 +42,7 @@ export const useRoomStore = defineStore('room', {
     async checkAvailability(startDate:string, endDate:string) {
         try {
           const response = await axios.get(`${apiUrl}/rooms?startDate=${startDate}&endDate=${endDate}`);
-          this.allRooms = response.data;
+          this.allRooms = response.data.content;
         } catch (error) {
           console.error('Error checking availability:', error);
         }

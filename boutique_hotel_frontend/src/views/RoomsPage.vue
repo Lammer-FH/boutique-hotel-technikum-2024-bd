@@ -41,8 +41,8 @@
             <ion-icon class="error-icon" :icon="closeCircleOutline"></ion-icon>
           </ion-card-header>
           <ion-card-content>
-            There are no available Rooms for the given dates. Please enter
-            different Dates or come back on another day.
+            There are no available rooms for the given dates. Please enter
+            different dates or come back on another day.
           </ion-card-content>
         </ion-card>
       </div>

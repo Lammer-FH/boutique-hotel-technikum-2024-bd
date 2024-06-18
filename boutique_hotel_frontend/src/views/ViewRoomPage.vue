@@ -48,7 +48,12 @@
       </ion-item>
 
       <div class="ion-padding">
-        <h3>{{ singleRoom?.extras }}</h3>
+        <div class="extras">
+          <div v-for="extra in parsedExtras">
+            <IonIcon :icon="iconMapper[extra]" class="extra-icon" /> {{ extra }}
+          </div>
+        </div>
+
         <p>{{ singleRoom?.description }}</p>
       </div>
       <ion-button
@@ -78,6 +83,27 @@ import {
 import { chevronBackOutline, chevronForwardOutline } from "ionicons/icons";
 import { computed, ref, onBeforeMount } from "vue";
 import { useRoomStore } from "@/roomStore";
+import {
+  barbell,
+  restaurant,
+  wifi,
+  wine,
+  boat,
+  gameController,
+  bus,
+  airplane,
+} from "ionicons/icons";
+
+const iconMapper: any = {
+  "free Wifi": wifi,
+  "breakfast Included": restaurant,
+  "free Gym": barbell,
+  "free drinks": wine,
+  "free Boat Trips": boat,
+  "Gaming Room": gameController,
+  "Airport pickup ": airplane,
+  "free Shuttle Service": bus,
+};
 
 const getBackButtonText = () => {
   const win = window as any;
@@ -89,6 +115,12 @@ import router from "@/router";
 const route = useRoute();
 const currentImageIndex = ref(0);
 const roomStore = useRoomStore();
+
+const singleRoom = computed(() => roomStore.singleRoom);
+
+const parsedExtras = singleRoom?.value?.extras
+  .split(",")
+  .map((extra) => extra.trim());
 
 const navigateToReservation = () => {
   if (singleRoom.value && singleRoom.value.id) {
@@ -110,6 +142,7 @@ const fetchRoomData = async () => {
 onBeforeMount(async () => {
   await fetchRoomData();
 });
+
 const currentImage = computed(() => {
   return singleRoom.value?.images?.[currentImageIndex.value];
 });
@@ -125,8 +158,6 @@ const prevImage = () => {
     currentImageIndex.value--;
   }
 };
-
-const singleRoom = computed(() => roomStore.singleRoom);
 </script>
 
 <style scoped>
@@ -206,5 +237,13 @@ p {
 
 .disabled-icon {
   opacity: 0.5;
+}
+
+.extras {
+  display: flex !important;
+  flex-direction: column;
+}
+.extra-icon {
+  color: black !important;
 }
 </style>
