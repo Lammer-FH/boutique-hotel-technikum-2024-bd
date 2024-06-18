@@ -187,10 +187,18 @@ p {
 }
 
 .room-images {
+  margin-top: 5px;
   width: 500px;
   height: 300px;
 }
 
+@media (max-width: 768px) {
+  .room-images {
+    margin-top: 25px;
+    width: 250px;
+    height: 150px;
+  }
+}
 .icons {
   position: absolute;
   z-index: 1000;
