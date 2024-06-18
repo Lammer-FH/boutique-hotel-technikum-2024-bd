@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { Room } from './types';  
+import { Room , allRoomsMetaData} from './types';  
 
 const apiUrl = 'http://localhost:8001';
 
@@ -8,6 +8,7 @@ export const useRoomStore = defineStore('room', {
   state: () => ({
     singleRoom: null as Room | null,
     allRooms: [] as Room[],
+    allRoomsMetaDeta: null as allRoomsMetaData| null
   }),
  
   actions: {
@@ -24,7 +25,10 @@ export const useRoomStore = defineStore('room', {
     async fetchAllRooms() {
       try {
         const response = await axios.get(`${apiUrl}/rooms`);
-        this.allRooms = response.data;
+        this.allRooms = response.data.content;
+        this.allRoomsMetaDeta={totalElementsCount: response.data.totalElementsCount,
+            totalPages: response.data.totalPages
+          };
       } catch (error) {
         console.error('Error fetching data:', error);
       }

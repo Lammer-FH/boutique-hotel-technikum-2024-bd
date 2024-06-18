@@ -8,3 +8,7 @@ export interface Room {
     description: string;
   }
   
+  export interface allRoomsMetaData{
+    totalPages: number;
+    totalElementsCount:number;
+  }
