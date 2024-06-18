@@ -48,12 +48,13 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton, IonButton
+  IonBackButton,
+  IonButton
 } from '@ionic/vue';
 import MessageListItem from '@/components/RoomListItem.vue';
 import { onMounted, ref } from 'vue';
 import VueDatePicker from "@vuepic/vue-datepicker";
-import '@vuepic/vue-datepicker/dist/main.css'
+import '@vuepic/vue-datepicker/dist/main.css';
 import { useRoomStore } from '@/roomStore';
 
 const roomStore = useRoomStore();
@@ -71,19 +72,19 @@ const formattedDate = (date, isCheckout = false) => {
   const year = d.getFullYear();
   const hour = isCheckout ? '23' : '00';
   const minute = isCheckout ? '59' : '00';
-  return `${day}.${month}.${year} ${hour}:${minute}`;
+  return `${year}-${month}-${day}T${hour}:${minute}`;
 };
 
 const checkAvailability = async () => {
   if (date.value[0] && date.value[1]) {
     await roomStore.checkAvailability(
-      date.value[0].toISOString().split('T')[0],
-      date.value[1].toISOString().split('T')[0]
+        formattedDate(date.value[0]),
+        formattedDate(date.value[1], true)
     );
   } else {
     console.log('Please select a date range.');
   }
-}
+};
 
 onMounted(() => {
   fetchData();
