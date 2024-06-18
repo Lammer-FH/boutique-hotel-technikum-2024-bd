@@ -41,9 +41,7 @@
               "
             ></ion-icon>
           </div>
-          <h3>
-            Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note>
-          </h3>
+          <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
         </ion-label>
       </ion-item>
 
@@ -67,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from "vue-router";
+import { useRoute } from 'vue-router';
 import {
   IonBackButton,
   IonButtons,
@@ -108,7 +106,7 @@ const iconMapper: any = {
 const getBackButtonText = () => {
   const win = window as any;
   const mode = win && win.Ionic && win.Ionic.mode;
-  return mode === "ios" ? "Inbox" : "";
+  return mode === 'ios' ? 'Inbox' : '';
 };
 
 import router from "@/router";
@@ -124,15 +122,20 @@ const parsedExtras = singleRoom?.value?.extras
 
 const navigateToReservation = () => {
   if (singleRoom.value && singleRoom.value.id) {
-    console.log(
-      "Navigating to reservation page for room:",
-      singleRoom.value.id
-    );
-    router.push(`/reservation/${singleRoom.value.id}`);
+    console.log('Navigating to reservation page for room:', singleRoom.value.id);
+    router.push({
+      name: 'Reservation',
+      query: {
+        roomId: singleRoom.value.id,
+        checkIn: route.query.checkIn,
+        checkOut: route.query.checkOut,
+      }
+    });
   } else {
-    console.error("Room ID is not available");
+    console.error('Room ID is not available');
   }
 };
+
 
 const fetchRoomData = async () => {
   const roomId = route.params.id as string;
@@ -140,7 +143,7 @@ const fetchRoomData = async () => {
 };
 
 onBeforeMount(async () => {
-  await fetchRoomData();
+  await fetchRoomData(); 
 });
 
 const currentImage = computed(() => {
@@ -205,6 +208,7 @@ h1 {
   width: 100%;
   max-width: 500px;
   margin: 10px auto;
+
 }
 
 p {
@@ -233,6 +237,7 @@ p {
 .icons {
   position: absolute;
   z-index: 1000;
+
 }
 
 .disabled-icon {

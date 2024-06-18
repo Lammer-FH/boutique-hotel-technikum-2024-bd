@@ -62,6 +62,8 @@ const iconMapper: any = {
 
 const props = defineProps({
   room: Object,
+  checkIn: String,
+  checkOut: String,
 });
 
 const parsedExtras = props.room?.extras.split(",").map((extra) => extra.trim());
