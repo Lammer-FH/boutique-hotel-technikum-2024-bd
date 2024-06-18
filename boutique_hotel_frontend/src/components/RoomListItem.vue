@@ -1,5 +1,5 @@
 <template>
-  <ion-item v-if="room" :routerLink="'/room/' + room.id" :detail="false" class="list-item">
+  <ion-item :routerLink="`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}`" :detail="false" class="list-item">
     <div slot="start"></div>
     <ion-label class="ion-text-wrap">
       <h2 class="room-title">
@@ -46,6 +46,8 @@ import {barbell, restaurant, wifi, wine, boat, gameController, bus, airplane} fr
 
 const props=defineProps({
   room: Object,
+  checkIn: String,
+  checkOut: String,
 });
 
 const parsedExtras = props.room?.extras.split(',').map(extra => extra.trim());
