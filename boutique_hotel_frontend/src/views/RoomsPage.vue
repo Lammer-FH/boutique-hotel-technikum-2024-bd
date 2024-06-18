@@ -35,25 +35,37 @@
         </ion-toolbar>
       </ion-header>
 
+      <div v-if="!roomStore.allRooms.length" class="error-card-container">
+        <ion-card class="error-card">
+          <ion-card-header>
+            <ion-icon class="error-icon" :icon="closeCircleOutline"></ion-icon>
+          </ion-card-header>
+          <ion-card-content>
+            There are no available Rooms for the given dates. Please enter
+            different Dates or come back on another day.
+          </ion-card-content>
+        </ion-card>
+      </div>
       <div v-if="roomStore.allRooms.length">
-      <ion-list>
-        <MessageListItem
-          v-for="room in roomStore.allRooms"
-          :key="room.id"
-          :room="room"
-        />
-      </ion-list>
-      <div class="pagination-container">
-        <div
-          v-for="page in roomStore.allRoomsMetaDeta?.totalPages"
-           :class="roomStore.currentPage === page ? 'page selected-page':'page'"
-          @click="()=>updateData(page)"
-        >
-          {{ page }}
+        <ion-list>
+          <MessageListItem
+            v-for="room in roomStore.allRooms"
+            :key="room.id"
+            :room="room"
+          />
+        </ion-list>
+        <div class="pagination-container">
+          <div
+            v-for="page in roomStore.allRoomsMetaDeta?.totalPages"
+            :class="
+              roomStore.currentPage === page ? 'page selected-page' : 'page'
+            "
+            @click="() => updateData(page)"
+          >
+            {{ page }}
+          </div>
         </div>
       </div>
-    </div>
-
     </ion-content>
   </ion-page>
 </template>
@@ -71,12 +83,18 @@ import {
   IonButtons,
   IonBackButton,
   IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
 } from "@ionic/vue";
 import MessageListItem from "@/components/RoomListItem.vue";
 import { onMounted, ref, watch } from "vue";
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useRoomStore } from "@/roomStore";
+import { closeCircleOutline } from "ionicons/icons";
 
 const roomStore = useRoomStore();
 
@@ -85,10 +103,10 @@ const date = ref();
 const fetchData = async () => {
   await roomStore.fetchAllRooms();
 };
-const updateData = (page:number) => {
-      roomStore.setCurrentPage(page);
-      fetchData()
-        };
+const updateData = (page: number) => {
+  roomStore.setCurrentPage(page);
+  fetchData();
+};
 
 const checkAvailability = async () => {
   if (date.value[0] && date.value[1]) {
@@ -132,7 +150,18 @@ const refresh = (ev: CustomEvent) => {
   display: flex;
   justify-content: center;
 }
-
+.error-card-container {
+  display: flex;
+  justify-content: center;
+}
+.error-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 200px;
+  width: 40%;
+  height: 30%;
+}
 .page {
   width: 20px;
   border: 0.5px solid saddlebrown;
@@ -142,8 +171,11 @@ const refresh = (ev: CustomEvent) => {
 .selected-page {
   background-color: saddlebrown;
   color: white;
-
 }
-
-
+.error-icon {
+  color: saddlebrown;
+  font-size: 18px!important;
+  height: 100px;
+  width: 100px;
+}
 </style>
