@@ -3,7 +3,10 @@
     <ion-header :translucent="true">
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button :text="getBackButtonText()" default-href="/"></ion-back-button>
+          <ion-back-button
+            :text="getBackButtonText()"
+            default-href="/"
+          ></ion-back-button>
         </ion-buttons>
         <ion-title>{{ singleRoom?.title }}</ion-title>
       </ion-toolbar>
@@ -19,11 +22,28 @@
             </span>
           </h2>
           <div class="image-wrapper">
-            <ion-icon @click="prevImage" :class="currentImageIndex === 0 && 'disabled-icon'"  :icon="chevronBackOutline"></ion-icon>
-            <img :src="currentImage" alt="Hotel Room Image" class="room-images" />
-              <ion-icon  @click="nextImage" :icon="chevronForwardOutline" :class="singleRoom.images.length-1 === currentImageIndex && 'disabled-icon'"></ion-icon>
+            <ion-icon
+              @click="prevImage"
+              :class="currentImageIndex === 0 && 'disabled-icon'"
+              :icon="chevronBackOutline"
+            ></ion-icon>
+            <img
+              :src="currentImage"
+              alt="Hotel Room Image"
+              class="room-images"
+            />
+            <ion-icon
+              @click="nextImage"
+              :icon="chevronForwardOutline"
+              :class="
+                singleRoom.images.length - 1 === currentImageIndex &&
+                'disabled-icon'
+              "
+            ></ion-icon>
           </div>
-          <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
+          <h3>
+            Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note>
+          </h3>
         </ion-label>
       </ion-item>
 
@@ -31,13 +51,18 @@
         <h3>{{ singleRoom?.extras }}</h3>
         <p>{{ singleRoom?.description }}</p>
       </div>
-      <ion-button class="check-availability-button" expand="block" @click="navigateToReservation">Reserve Room</ion-button>
+      <ion-button
+        class="check-availability-button"
+        expand="block"
+        @click="navigateToReservation"
+        >Reserve Room</ion-button
+      >
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 import {
   IonBackButton,
   IonButtons,
@@ -49,31 +74,33 @@ import {
   IonNote,
   IonPage,
   IonToolbar,
-} from '@ionic/vue';
-import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
-import { computed,ref, onBeforeMount } from 'vue';
-import { useRoomStore } from '@/roomStore';
+} from "@ionic/vue";
+import { chevronBackOutline, chevronForwardOutline } from "ionicons/icons";
+import { computed, ref, onBeforeMount } from "vue";
+import { useRoomStore } from "@/roomStore";
 
 const getBackButtonText = () => {
   const win = window as any;
   const mode = win && win.Ionic && win.Ionic.mode;
-  return mode === 'ios' ? 'Inbox' : '';
+  return mode === "ios" ? "Inbox" : "";
 };
 
 import router from "@/router";
 const route = useRoute();
 const currentImageIndex = ref(0);
-const roomStore= useRoomStore();
+const roomStore = useRoomStore();
 
 const navigateToReservation = () => {
   if (singleRoom.value && singleRoom.value.id) {
-    console.log('Navigating to reservation page for room:', singleRoom.value.id);
+    console.log(
+      "Navigating to reservation page for room:",
+      singleRoom.value.id
+    );
     router.push(`/reservation/${singleRoom.value.id}`);
   } else {
-    console.error('Room ID is not available');
+    console.error("Room ID is not available");
   }
 };
-
 
 const fetchRoomData = async () => {
   const roomId = route.params.id as string;
@@ -81,7 +108,7 @@ const fetchRoomData = async () => {
 };
 
 onBeforeMount(async () => {
-  await fetchRoomData(); 
+  await fetchRoomData();
 });
 const currentImage = computed(() => {
   return singleRoom.value?.images?.[currentImageIndex.value];
@@ -99,10 +126,7 @@ const prevImage = () => {
   }
 };
 
-
 const singleRoom = computed(() => roomStore.singleRoom);
-
-
 </script>
 
 <style scoped>
@@ -146,35 +170,33 @@ h1 {
   font-size: 1.4rem;
 }
 
-.check-availability-button{
+.check-availability-button {
   width: 100%;
   max-width: 500px;
   margin: 10px auto;
-
 }
 
 p {
   line-height: 1.4;
 }
 
-.image-wrapper{
+.image-wrapper {
   display: flex;
   align-items: center;
-justify-content:center;
+  justify-content: center;
 }
 
-.room-images{
+.room-images {
   width: 500px;
   height: 300px;
 }
 
-
-.icons{
+.icons {
   position: absolute;
   z-index: 1000;
-
 }
 
-.disabled-icon{
-opacity: 0.5;}
+.disabled-icon {
+  opacity: 0.5;
+}
 </style>

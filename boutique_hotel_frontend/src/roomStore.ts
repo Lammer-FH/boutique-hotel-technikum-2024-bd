@@ -8,10 +8,15 @@ export const useRoomStore = defineStore('room', {
   state: () => ({
     singleRoom: null as Room | null,
     allRooms: [] as Room[],
-    allRoomsMetaDeta: null as allRoomsMetaData| null
+    allRoomsMetaDeta: null as allRoomsMetaData| null,
+    currentPage: 1
   }),
  
   actions: {
+    setCurrentPage(page:number) {
+        this.currentPage = page;
+      },
+      
     async fetchRoomData(roomId:string) {
       try {
         const response = await axios.get(`${apiUrl}/rooms/${roomId}`);
@@ -23,8 +28,9 @@ export const useRoomStore = defineStore('room', {
       }
     },
     async fetchAllRooms() {
-      try {
-        const response = await axios.get(`${apiUrl}/rooms`);
+      try {0
+        const response = await axios.get(`${apiUrl}/rooms?pageSize=5&pageNumber=${this.currentPage-1}`);
+        console.log(this.currentPage)
         this.allRooms = response.data.content;
         this.allRoomsMetaDeta={totalElementsCount: response.data.totalElementsCount,
             totalPages: response.data.totalPages
