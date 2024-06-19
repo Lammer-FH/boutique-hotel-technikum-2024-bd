@@ -1,60 +1,59 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button
-            :text="getBackButtonText()"
-            default-href="/"
-          ></ion-back-button>
-        </ion-buttons>
-        <ion-title>{{ singleRoom?.title }}</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <ion-content :fullscreen="true">
+      <ion-header :translucent="true">
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-back-button :text="getBackButtonText()" default-href="/"></ion-back-button>
+          </ion-buttons>
+          <ion-title>{{ singleRoom?.title }}</ion-title>
+        </ion-toolbar>
+      </ion-header>
+      <ion-spinner v-if="loading" name="crescent"></ion-spinner>
+      <div v-if="!loading && singleRoom">
+        <ion-item>
+          <ion-label class="ion-text-wrap">
+            <h2>
+              {{ singleRoom?.title }}
+              <span class="price">
+                <ion-note>${{ singleRoom?.price }}</ion-note>
+              </span>
+            </h2>
+            <div class="image-wrapper">
+              <ion-icon
+                  @click="prevImage"
+                  :class="currentImageIndex === 0 && 'disabled-icon'"
+                  :icon="chevronBackOutline"
+              ></ion-icon>
+              <img
+                  :src="currentImage"
+                  alt="Hotel Room Image"
+                  class="room-images"
+              />
+              <ion-icon
+                  @click="nextImage"
+                  :icon="chevronForwardOutline"
+                  :class="singleRoom.images.length - 1 === currentImageIndex && 'disabled-icon'"
+              ></ion-icon>
+            </div>
+            <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
+          </ion-label>
+        </ion-item>
 
-    <ion-content :fullscreen="true" v-if="singleRoom">
-      <ion-item>
-        <ion-label class="ion-text-wrap">
-          <h2>
-            {{ singleRoom?.title }}
-            <span class="price">
-              <ion-note>${{ singleRoom?.price }}</ion-note>
-            </span>
-          </h2>
-          <div class="image-wrapper">
-            <ion-icon
-              @click="prevImage"
-              :class="currentImageIndex === 0 && 'disabled-icon'"
-              :icon="chevronBackOutline"
-            ></ion-icon>
-            <img
-              :src="currentImage"
-              alt="Hotel Room Image"
-              class="room-images"
-            />
-            <ion-icon
-              @click="nextImage"
-              :icon="chevronForwardOutline"
-              :class="
-                singleRoom.images.length - 1 === currentImageIndex &&
-                'disabled-icon'
-              "
-            ></ion-icon>
+        <div class="ion-padding">
+          <div class="extras">
+            <div v-for="extra in parsedExtras" :key="extra">
+              <IonIcon :icon="iconMapper[extra]" class="extra-icon" /> {{ extra }}
+            </div>
           </div>
-          <h3>Beds: <ion-note>{{ singleRoom?.bedcount }}</ion-note></h3>
-        </ion-label>
-      </ion-item>
-
-      <div class="ion-padding">
-        <h3>{{ singleRoom?.extras }}</h3>
-        <p>{{ singleRoom?.description }}</p>
+          <p>{{ singleRoom?.description }}</p>
+        </div>
+        <ion-button
+            class="check-availability-button"
+            expand="block"
+            @click="navigateToReservation"
+        >Reserve Room</ion-button>
       </div>
-      <ion-button
-        class="check-availability-button"
-        expand="block"
-        @click="navigateToReservation"
-        >Reserve Room</ion-button
-      >
     </ion-content>
   </ion-page>
 </template>
@@ -74,19 +73,46 @@ import {
   IonToolbar,
 } from '@ionic/vue';
 import { chevronBackOutline, chevronForwardOutline } from 'ionicons/icons';
-import { computed,ref, onBeforeMount } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import { useRoomStore } from '@/roomStore';
-
-
 import router from "@/router";
+import {
+  barbell,
+  restaurant,
+  wifi,
+  wine,
+  boat,
+  gameController,
+  bus,
+  airplane,
+  leafOutline,
+} from "ionicons/icons";
 
+const iconMapper: any = {
+  "Free WiFi": wifi,
+  "Breakfast included": restaurant,
+  "free Gym": barbell,
+  "free drinks": wine,
+  "free Boat Trips": boat,
+  "Gaming Room": gameController,
+  "Airport pickup": airplane,
+  "free Shuttle Service": bus,
+  "Spa access": leafOutline
+};
 const route = useRoute();
 const currentImageIndex = ref(0);
-const roomStore= useRoomStore();
+const roomStore = useRoomStore();
+const singleRoom = computed(() => roomStore.singleRoom);
+const loading = computed(() => roomStore.loading);
+
+const parsedExtras = computed(() => {
+  return singleRoom.value?.extras?.split(",").map((extra) => extra.trim()) || [];
+});
 const getBackButtonText = () => {
   const win = window as any;
   const mode = win && win.Ionic && win.Ionic.mode;
   return mode === 'ios' ? 'Inbox' : '';
+
 };
 
 const navigateToReservation = () => {
@@ -105,14 +131,13 @@ const navigateToReservation = () => {
   }
 };
 
-
 const fetchRoomData = async () => {
   const roomId = route.params.id as string;
   await roomStore.fetchRoomData(roomId);
 };
 
 onBeforeMount(async () => {
-  await fetchRoomData(); 
+  await fetchRoomData();
 });
 const currentImage = computed(() => {
   return singleRoom.value?.images?.[currentImageIndex.value];
@@ -129,11 +154,6 @@ const prevImage = () => {
     currentImageIndex.value--;
   }
 };
-
-
-const singleRoom = computed(() => roomStore.singleRoom);
-
-
 </script>
 
 <style scoped>
@@ -149,7 +169,6 @@ ion-label {
 
 ion-item h2 {
   font-weight: 600;
-
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -181,7 +200,6 @@ h1 {
   width: 100%;
   max-width: 500px;
   margin: 10px auto;
-
 }
 
 p {
@@ -207,10 +225,15 @@ p {
     height: 150px;
   }
 }
-.icons {
-  position: absolute;
-  z-index: 1000;
-
+.extras {
+  display: flex!important;
+  flex-direction: row;
+}
+.extra-icon {
+  margin-right: 5px!important;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  color: #000dff !important;
 }
 
 .disabled-icon {

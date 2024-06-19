@@ -10,30 +10,32 @@
     </ion-header>
 
     <ion-content :fullscreen="true">
-      <form @submit.prevent="goToPreview" class="reservation-form">
-        <ion-item class="input-item">
-          <ion-label position="floating">First Name</ion-label>
-          <ion-input v-model="firstName" required></ion-input>
-        </ion-item>
+      <ion-spinner v-if="loading" name="crescent"></ion-spinner>
+      <div v-if="!loading">
+        <form @submit.prevent="goToPreview" class="reservation-form">
+          <ion-item class="input-item">
+            <ion-label position="floating" >First Name: </ion-label>
+            <ion-input  v-model="firstName" required></ion-input>
+          </ion-item>
 
-        <ion-item class="input-item">
-          <ion-label position="floating">Last Name</ion-label>
-          <ion-input v-model="lastName" required></ion-input>
-        </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="floating" >Last Name: </ion-label>
+            <ion-input   v-model="lastName" required></ion-input>
+          </ion-item>
 
-        <ion-item class="input-item">
-          <ion-label position="floating">Email</ion-label>
-          <ion-input v-model="email" type="email" required></ion-input>
-        </ion-item>
+          <ion-item class="input-item">
+            <ion-label position="floating" >Email: </ion-label>
+            <ion-input   v-model="email" type="email" required></ion-input>
+          </ion-item>
 
-        <ion-item class="input-item">
-          <ion-label>Breakfast</ion-label>
-          <ion-checkbox v-model="breakfast"></ion-checkbox>
-        </ion-item>
+          <ion-item class="input-item">
+            <ion-label>Breakfast</ion-label>
+            <ion-checkbox v-model="breakfast"></ion-checkbox>
+          </ion-item>
 
-
-        <ion-button expand="block" type="submit" class="submit-button">Preview Reservation</ion-button>
-      </form>
+          <ion-button expand="block" type="submit" class="submit-button">Preview Reservation</ion-button>
+        </form>
+      </div>
     </ion-content>
   </ion-page>
 </template>
@@ -51,7 +53,8 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButton
+  IonButton,
+  IonSpinner,
 } from '@ionic/vue';
 import { computed, onBeforeMount, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -69,9 +72,12 @@ const breakfast = ref(false);
 const checkIn = ref(route.query.checkIn);
 const checkOut = ref(route.query.checkOut);
 const singleRoom = computed(() => roomStore.singleRoom);
+const loading = ref(false);
 
-const goToPreview = () => {
-  router.push({
+const goToPreview = async () => {
+  loading.value = true;
+  await new Promise(resolve => setTimeout(resolve, 500)); // Add a slight delay to ensure smooth transition
+  await router.push({
     name: 'PreviewReservation',
     query: {
       roomId: roomId.toString(),
@@ -85,9 +91,13 @@ const goToPreview = () => {
       roomPrice: singleRoom.value?.price.toString()
     }
   });
+  loading.value = false;
 };
+
 const fetchRoomData = async () => {
+  loading.value = true;
   await roomStore.fetchRoomData(roomId as string);
+  loading.value = false;
 };
 
 onBeforeMount(async () => {
@@ -97,7 +107,14 @@ onBeforeMount(async () => {
 
 <style scoped>
 ion-item {
+  display: flex;
+  align-items: flex-start;
   margin-bottom: 16px;
+}
+
+ion-input {
+  margin-top: 15px;
+  width: 100%;
 }
 
 .reservation-form {

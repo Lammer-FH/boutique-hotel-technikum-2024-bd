@@ -28,16 +28,14 @@ public class RoomController {
     public ResponseEntity<ResponseDTO> getRooms(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(value = "pageSize", defaultValue = "5", required = false)  int pageSize,
-            @RequestParam(value = "pageNumber", defaultValue = "1", required = false)  int pageNumber
-    ) {
+            @RequestParam(value = "pageSize", defaultValue = "5", required = false) int pageSize,
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber) {
 
         RoomFilterDTO filter = new RoomFilterDTO();
         filter.setStartDate(startDate);
         filter.setEndDate(endDate);
 
-
-        return new ResponseEntity<>( roomService.getRoomsWithFilters(filter, pageSize, pageNumber), HttpStatus.OK);
+        return new ResponseEntity<>(roomService.getRoomsWithFilters(filter, pageNumber, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
