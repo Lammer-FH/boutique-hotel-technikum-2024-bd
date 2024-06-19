@@ -31,6 +31,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/preview-reservation',
     name: 'PreviewReservation',
     component: () => import('../views/PreviewReservationPage.vue')
+  },
+  {
+    path: '/confirm-reservation',
+    name: 'ConfirmReservation',
+    component: () => import('../views/ConfirmReservationPage.vue')
   }
 ]
 
