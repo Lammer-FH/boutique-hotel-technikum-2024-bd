@@ -81,8 +81,10 @@ const checkOut = ref(route.query.checkOut);
 const roomTitle = ref(route.query.roomTitle);
 const roomPrice = ref(route.query.roomPrice);
 const loading = ref(false);
+const roomDetails = ref(null);
 
-onMounted(() => {
+onMounted(async () => {
+  await fetchRoomDetails();
   console.log('Parameters received:');
   console.log('roomId:', roomId.value);
   console.log('firstName:', firstName.value);
@@ -95,10 +97,24 @@ onMounted(() => {
   console.log('roomPrice:', roomPrice.value);
 });
 
+const fetchRoomDetails = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get(`http://localhost:8001/rooms/${roomId.value}`);
+    const data = response.data;
+    data.images = JSON.parse(data.images);
+    roomDetails.value = data;
+  } catch (error) {
+    console.error('Error fetching room details:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
 const submitReservation = async () => {
   loading.value = true;
   try {
-    const response = await axios.post('http://localhost:8001/reservations', {
+    await axios.post('http://localhost:8001/reservations', {
       first_name: firstName.value,
       last_name: lastName.value,
       email: email.value,
@@ -108,8 +124,23 @@ const submitReservation = async () => {
       checkOut: checkOut.value
     });
 
-    alert('Reservation successful!');
-    router.push({ name: 'Home' });
+    router.push({
+      name: 'ConfirmReservation',
+      query: {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        email: email.value,
+        breakfast: breakfast.value ? 'true' : 'false',
+        checkIn: checkIn.value,
+        checkOut: checkOut.value,
+        roomTitle: roomDetails.value.title,
+        roomPrice: roomDetails.value.price,
+        roomExtras: roomDetails.value.extras,
+        roomDescription: roomDetails.value.description,
+        roomImage: roomDetails.value.images[0],
+        roomImageTwo: roomDetails.value.images[1],
+      }
+    });
   } catch (error) {
     console.error('Error making reservation:', error);
     alert('Failed to make reservation');
