@@ -1,5 +1,5 @@
 <template>
-  <ion-item :routerLink="`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}`" :detail="false" class="list-item">
+  <ion-item @click="navigateToRoom" class="list-item">
     <div slot="start"></div>
     <ion-label class="ion-text-wrap">
       <h2 class="room-title">
@@ -10,56 +10,74 @@
         </span>
       </h2>
       <img
-             :src="parsedImage"
-              alt="Hotel Room Image"
-              class="thumbnail"
-            /> 
+          :src="parsedImage"
+          alt="Hotel Room Image"
+          class="thumbnail"
+      />
       <div class="text">
-      <p>Beds: {{ room.bedcount }}</p>
-      <div class="extras" >
-          <IonIcon :icon="iconMapper[extra]" v-for="extra in parsedExtras" class="extra-icon" />
+        <p>Beds: {{ room.bedcount }}</p>
+        <div class="extras">
+          <IonIcon :icon="iconMapper[extra]" v-for="extra in parsedExtras" :key="extra" class="extra-icon" />
+        </div>
+        <p>{{ room.description }}</p>
       </div>
-      <p>{{ room.description }}</p>
-    </div>
-   
     </ion-label>
   </ion-item>
 </template>
 
-
 <script setup lang="ts">
 import { IonIcon, IonItem, IonLabel, IonNote } from '@ionic/vue';
 import { chevronForward } from 'ionicons/icons';
-import {barbell, restaurant, wifi, wine, boat, gameController, bus, airplane} from "ionicons/icons";
+import { useRoomStore } from '@/roomStore';
+import { useRouter } from 'vue-router';
+import {
+  barbell,
+  restaurant,
+  wifi,
+  wine,
+  boat,
+  gameController,
+  bus,
+  airplane,
+  leafOutline,
+} from "ionicons/icons";
+import { computed } from "vue";
 
- const iconMapper :any= {
-  "free Wifi": wifi,
-  "breakfast Included": restaurant,
+const iconMapper: any = {
+  "Free WiFi": wifi,
+  "Breakfast included": restaurant,
   "free Gym": barbell,
-  "free drinks":wine,
+  "free drinks": wine,
   "free Boat Trips": boat,
   "Gaming Room": gameController,
-  "Airport pickup ": airplane,
-  "free Shuttle Service": bus
+  "Airport pickup": airplane,
+  "free Shuttle Service": bus,
+  "Spa access": leafOutline
 };
 
-
-const props=defineProps({
+const props = defineProps({
   room: Object,
   checkIn: String,
   checkOut: String,
 });
 
-const parsedExtras = props.room?.extras.split(',').map(extra => extra.trim());
-console.log(props.room?.extras,parsedExtras)
-
-const {images} = props!.room!;
-const parsedImage= JSON.parse(images)[0];
-
+const parsedExtras = computed(() => {
+  return props.room?.extras.split(",").map((extra) => extra.trim()) || [];
+});
+const { images } = props.room!;
+const parsedImage = JSON.parse(images)[0];
 
 const isIos = () => {
   const win = window as any;
-  return win && win.Ionic && win.Ionic.mode === 'ios';
+  return win && win.Ionic && win.Ionic.mode === "ios";
+};
+
+const roomStore = useRoomStore();
+const router = useRouter();
+
+const navigateToRoom = async () => {
+  roomStore.loading = true;
+  await router.push(`/room/${props.room.id}?checkIn=${props.checkIn}&checkOut=${props.checkOut}`);
 };
 </script>
 
@@ -121,28 +139,27 @@ const isIos = () => {
   background: var(--ion-color-primary);
 }
 
-.thumbnail{
-margin-top:5px;
-width: 140px;
-height: 70px;
-float: left;
+.thumbnail {
+  margin-top: 5px;
+  width: 140px;
+  height: 70px;
+  float: left;
 }
-.text{
+
+.text {
   margin-top: 4px;
-  padding-left: 150px; 
+  padding-left: 150px;
 }
+
 .extras {
   display: flex!important;
   flex-direction: row;
 }
-.extra-icon{
-margin-right: 5px!important;
-margin-top: 4px;
-margin-bottom: 4px;
 
-  color: black!important;
-
-
+.extra-icon {
+  margin-right: 5px!important;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  color: #000dff !important;
 }
-
 </style>

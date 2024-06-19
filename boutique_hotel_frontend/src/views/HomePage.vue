@@ -1,5 +1,6 @@
 <template>
   <ion-page>
+    <ion-content>
     <ion-header :translucent="true">
       <ion-toolbar color="primary">
         <ion-buttons slot="start">
@@ -9,7 +10,6 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content>
       <swiper :speed="500" :loop=true :autoplay="{delay: 20}"  :slidesPerView="1"  :grabCursor="true" :pagination="true" navigation>
         <swiper-slide>
           <div class="carousel-image">
@@ -41,7 +41,7 @@
         </div>
       </div>
 
-      <ion-button  expand="block" class="check-availability-button" color="primary" :routerLink="'/rooms/'">Check Availability</ion-button>
+      <ion-button  expand="block" class="check-availability-button" color="primary" :routerLink="'/rooms/'">View Rooms</ion-button>
 
       <ion-grid>
         <ion-row>
@@ -60,10 +60,10 @@
 
       <div class="contact-info">
         <h3>Contact:</h3>
-        <p>adfsdfsdfsdf</p>
-        <p>aldsfkd@gmail.com</p>
+        <p>Group BD</p>
+        <p>technikum-wien@gmail.com</p>
         <h3>Address:</h3>
-        <p>Lorem ipsum dolor sit amet consetetur sadipscing elitr sed diam</p>
+        <p>Höchstädtpl. 6,<br> 1200 Wien</p>
       </div>
     </ion-content>
   </ion-page>
